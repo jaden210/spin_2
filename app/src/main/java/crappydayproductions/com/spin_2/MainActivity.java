@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -16,6 +17,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -65,6 +67,9 @@ public class MainActivity extends AppCompatActivity
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(1);
 
+        //detect when the view is changed
+
+
         //for the popup
         Intent intent = getIntent();
         Bundle bundle =  intent.getExtras();
@@ -79,6 +84,7 @@ public class MainActivity extends AppCompatActivity
             }
 
         }
+
 
 
     }
@@ -111,6 +117,9 @@ public class MainActivity extends AppCompatActivity
         //Leave blank
     }
 
+
+
+
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -139,6 +148,8 @@ public class MainActivity extends AppCompatActivity
             return 3;
         }
 
+
+
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
@@ -152,6 +163,8 @@ public class MainActivity extends AppCompatActivity
             return null;
         }
     }
+
+
 
     //this is the popup that shows after you finish the game
     public void displayAlertDialog() {
@@ -192,6 +205,22 @@ public class MainActivity extends AppCompatActivity
 
         //may not be the best place, but lets set the history here
         historyScorer();
+    }
+
+    //info dialog to start challenges. I put it here because I couldn't get it to work with an onclicklistener...
+    public void onClick(View v) {
+        AlertDialog alertBuilder = new AlertDialog.Builder(this)
+                .create();
+        Log.v("hi", "hi");
+        alertBuilder.setTitle(R.string.challengeDialogTitle);
+        alertBuilder.setMessage(MainActivity.this.getString(R.string.challengeDialogMessage));
+        alertBuilder.setButton("OK", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        alertBuilder.show();
     }
 
     public void historyScorer() {

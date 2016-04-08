@@ -1,13 +1,79 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="match_parent"
-    tools:context="crappydayproductions.com.spin_2.ChallengesScreen">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    android:layout_below="@+id/toolbar"
+    tools:context="crappydayproductions.com.spin_2.StartScreen"
+    android:orientation="vertical">
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Challenges" />
+        android:layout_marginTop="62dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="5dp"
+        card_view:cardCornerRadius="4dp">
 
-</FrameLayout>
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:id="@+id/dial"
+            android:background="@drawable/cdpspinlogoicon"
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:nestedScrollingEnabled="true"
+            android:onClick="onClick" />
+
+
+        <TextView
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="300dp"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/testtext" />
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="7dp">
+
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/textView2"
+                android:layout_weight="5" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/nav_spin"
+                android:id="@+id/right_text"
+                android:textAlignment="textEnd"
+                android:layout_gravity="bottom"
+                android:layout_weight="5"
+                android:layout_marginBottom="0dp"
+                android:textColor="@color/colorAccent" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:id="@+id/right_arrow"
+                android:src="@drawable/right"
+                android:layout_gravity="bottom|right"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>
