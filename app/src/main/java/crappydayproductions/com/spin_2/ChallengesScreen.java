@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.preference.DialogPreference;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -46,16 +48,14 @@ public class ChallengesScreen extends Fragment {
     TextView testView;
     TextView textviewPitch;
     TextView textviewRoll;
-
-
-
     private PopupWindow popupWindow;
     private LayoutInflater layoutInflater;
     int counter = 0;
     int priorcounter = 0;
-
+    float deg = 0;
     int cCount;
     int i1;
+    int cId;
     TextView textviewTurnTag;
     TextView textviewRpmTag;
     private static SensorManager mySensorManager;
@@ -94,6 +94,7 @@ public class ChallengesScreen extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
     }
 
     @Override
@@ -114,8 +115,8 @@ public class ChallengesScreen extends Fragment {
             mySensorManager = (SensorManager) getActivity().getSystemService (Context.SENSOR_SERVICE);
             List<Sensor> mySensors = mySensorManager.getSensorList(Sensor.TYPE_GAME_ROTATION_VECTOR);
 
-            mySensorManager.registerListener(mySensorEventListener, mySensors.get(0), SensorManager.SENSOR_DELAY_FASTEST);
-            sersorrunning = true;
+            //mySensorManager.registerListener(mySensorEventListener, mySensors.get(0), SensorManager.SENSOR_DELAY_FASTEST);
+            //sersorrunning = true;
             Log.v("Running", "Started Spin");
         }else if (sersorrunning) {
             mySensorManager.unregisterListener(mySensorEventListener);
@@ -157,14 +158,26 @@ public class ChallengesScreen extends Fragment {
 
 
 
+            if (event.values[2] < 0) {
+                deg  = ((1 + (1 + event.values[2])) * 180);
+            } else{
+                deg = event.values[2] * 180;
+            }
+
+            ImageView imageView = (ImageView) getActivity().findViewById(R.id.wheel);
+            imageView.setRotation(deg);
+            //TextView textView = (TextView) getActivity().findViewById(R.id.testtext);
+            //textView.setText(Float.toString(deg));
+
+
             //set spin count
             priorSpinCounter = spinAngle;
             if (spinCounter == 2) {
                 Random rnum = new Random();
                 i1 = rnum.nextInt(5000 - 500) + 500;
+                spinCounter = 5;
                 spinWheel();
-                mySensorManager.unregisterListener(mySensorEventListener);
-                spinCounter = 0;
+
             }
         }
 
@@ -185,15 +198,68 @@ public class ChallengesScreen extends Fragment {
 
 
 
+
     public void spinWheel () {
 
         Button dialView = (Button) getActivity().findViewById(R.id.dial);
         dialView.animate().rotation(i1).setInterpolator(new DecelerateInterpolator()).setDuration(8000).start();
+        dialView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mySensorManager.unregisterListener(mySensorEventListener);
+                sersorrunning = false;
+                spinCounter = 0;
+                //grabchallenge id from rotation of dial and wheel
+                cId = (i1 + Float.floatToIntBits(deg)) / 12;
 
-        //start a new challenge
+                //start a new challenge
+                // Selected Challenge dialog Accept your challenge
+                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                alert.setTitle(R.string.acceptChallengeDialogTitle);
+                alert.setCancelable(true);
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Toast.makeText(getBaseContext(), "Cancel clicked", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                alert.setPositiveButton("Accept Challenge", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // start Spin activity with parameters: build bundle
+                        FindChallenge();
+
+                    }
+                });
+                AlertDialog dialog = alert.create();
+                dialog.show();
+            }
+        }, 14000);
 
     }
 
+    public void FindChallenge() {
+        //lets make this use the backend
+
+        /*
+        challengeSpins = 2;
+        challengeTime = 10;
+        challengeRpm = 0;
+
+
+
+        Intent intent = new Intent(getContext(), SpinActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt("spins",challengeSpins);
+        bundle.putLong("time",challengeTime);
+        bundle.putInt("rpm",challengeRpm);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        */
+    }
 
 
 

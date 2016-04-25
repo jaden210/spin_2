@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Spin_2</string>
+    <string name="app_name">Spin</string>
 
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
@@ -12,5 +12,6 @@
     <string name="title_activity_spin">SpinActivity</string>
     <string name="challengeDialogMessage">Simply set your phone down and give it a spin to select a new challenge.</string>
     <string name="challengeDialogTitle">Welcome to Challenges!</string>
+    <string name="acceptChallengeDialogTitle">Incoming Challenge:</string>
 
 </resources>

@@ -75,13 +75,8 @@ public class MainActivity extends AppCompatActivity
         Bundle bundle =  intent.getExtras();
 
         if (bundle != null) {
-            boolean challenge = bundle.getBoolean("challenge");
 
-            if (challenge == true) {
-                displayAlertDialog();
-            }else {
-                displayAlertDialog();
-            }
+            displayAlertDialog();
 
         }
 
@@ -183,6 +178,13 @@ public class MainActivity extends AppCompatActivity
 
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         //alert.setTitle("Login");
+        if (challenge == true) {
+            alert.setTitle("You Win");
+        }else if (challenge == false) {
+            alert.setTitle("You Lose...");
+        }else {
+            alert.setTitle("Nice Work!!");
+        }
         alert.setView(alertLayout);
         alert.setCancelable(false);
         alert.setNegativeButton("back to the game", new DialogInterface.OnClickListener() {

@@ -35,13 +35,15 @@ public class SpinActivity extends AppCompatActivity {
     boolean checkOne;
     boolean checkTwo;
     boolean checkThree;
-    boolean challengeComplete;
     //Variables for challanges
     String challengePick;
     int challengeNum = 1;
-    int challengeSpins;
-    int challengeTime;
-    int challengeRpm;
+    int challengeSpins = 0;
+    long challengeTime = 0;
+    int challengeRpm = 0;
+    long startTime;
+    long curTime;
+    boolean complete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +62,16 @@ public class SpinActivity extends AppCompatActivity {
         sersorrunning = true;
 
         //check for challenge bundle. created in ChallengesScreen
+        Intent intent = getIntent();
+        Bundle bundle =  intent.getExtras();
+        if (bundle != null) {
+            challengeSpins = bundle.getInt("spins");
+            challengeRpm = bundle.getInt("rpm");
+            challengeTime = bundle.getLong("time");
+        }
+        if (challengeTime > 0) {
+            startTime = System.currentTimeMillis()/1000;
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -104,7 +116,7 @@ public class SpinActivity extends AppCompatActivity {
                 rollValueTime = System.currentTimeMillis();
                 timeout = 0;
                 //set highRpm
-                if (getRpm() > highRpm){
+                if (getRpm() > highRpm) {
                     highRpm = getRpm();
                 }
                 //Reset all the checks
@@ -114,9 +126,9 @@ public class SpinActivity extends AppCompatActivity {
             }
 
             //RPM Reset
-            if(spinAngle == priorSpinCounter){
+            if (spinAngle == priorSpinCounter) {
                 timeout++;
-                if (timeout == 250){
+                if (timeout == 250) {
                     textviewRpmTag.setText("0 RPM");
                     timeout = 0;
                 }
@@ -126,6 +138,39 @@ public class SpinActivity extends AppCompatActivity {
             priorSpinCounter = spinAngle;
             rpm = (rollValueTime - finalRollValueTime);
             textviewTurnTag.setText("SPINS: " + spinCounter);
+
+            curTime = System.currentTimeMillis() / 1000;
+
+            //challenge end
+            //wont enter until time is up
+            if (challengeTime > 0 && curTime >= startTime + challengeTime) {
+                if (challengeRpm > 0) {
+                    if (challengeRpm >= highRpm) {
+                        //you win
+                    } else {
+                        //you lose
+                    }
+                }
+                if (challengeSpins > 0) {
+
+                    if (challengeSpins < spinCounter) {
+                        complete = true;
+                        stop();
+                    } else {
+                        complete = false;
+                        stop();
+                    }
+                }
+            }
+            /*
+            //wont enter unless it is a spin only challenge
+            if (challengeSpins > 0 && challengeRpm == 0 && challengeTime == 0 && challengeSpins >= spinCounter) {
+                //you win
+            }
+            //wont enter unless it is a spin x under rpm x
+            if (challengeSpins > 0 && challengeRpm > 0 && spinCounter >= challengeSpins && highRpm <= challengeRpm) {
+
+            }*/
         }
 
         @Override
@@ -151,7 +196,7 @@ public class SpinActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putLong("highscoreRpm", highRpm);
         bundle.putLong("totalSpins", spinCounter);
-        bundle.putBoolean("challenge",challengeComplete);
+        bundle.putBoolean("challenge",complete);
         intent.putExtras(bundle);
         startActivity(intent);
         //add spin counter and highest rpm to history
