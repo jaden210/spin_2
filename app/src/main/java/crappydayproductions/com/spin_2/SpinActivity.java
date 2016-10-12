@@ -36,8 +36,6 @@ public class SpinActivity extends AppCompatActivity {
     boolean checkTwo;
     boolean checkThree;
     //Variables for challanges
-    String challengePick;
-    int challengeNum = 1;
     int challengeSpins = 0;
     long challengeTime = 0;
     int challengeRpm = 0;

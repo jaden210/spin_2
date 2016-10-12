@@ -46,34 +46,17 @@ public class ChallengesScreen extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     TextView testView;
-    TextView textviewPitch;
-    TextView textviewRoll;
-    private PopupWindow popupWindow;
-    private LayoutInflater layoutInflater;
-    int counter = 0;
-    int priorcounter = 0;
     float deg = 0;
-    int cCount;
     int i1;
     int cId;
-    TextView textviewTurnTag;
-    TextView textviewRpmTag;
     private static SensorManager mySensorManager;
     private boolean sersorrunning;
 
-    private Animation rotation;
     int spinCounter = 0;
     int priorSpinCounter = 0;
-    int timeout = 0;
-    long finalRollValueTime;
-    long rollValueTime;
     boolean checkOne;
     boolean checkTwo;
     boolean checkThree;
-    boolean challengeComplete;
-    //Variables for challanges
-    String challengePick;
-    int challengeNum = 1;
     int challengeSpins;
     int challengeTime;
     int challengeRpm;
@@ -114,17 +97,14 @@ public class ChallengesScreen extends Fragment {
         if (isVisibleToUser) {
             mySensorManager = (SensorManager) getActivity().getSystemService (Context.SENSOR_SERVICE);
             List<Sensor> mySensors = mySensorManager.getSensorList(Sensor.TYPE_GAME_ROTATION_VECTOR);
+            mySensorManager.registerListener(mySensorEventListener, mySensors.get(0), SensorManager.SENSOR_DELAY_FASTEST);
+            sersorrunning = true;
 
-            //mySensorManager.registerListener(mySensorEventListener, mySensors.get(0), SensorManager.SENSOR_DELAY_FASTEST);
-            //sersorrunning = true;
-            Log.v("Running", "Started Spin");
         }else if (sersorrunning) {
             mySensorManager.unregisterListener(mySensorEventListener);
             sersorrunning = false;
         }
     }
-
-
 
     private SensorEventListener mySensorEventListener = new SensorEventListener() {
 
@@ -135,15 +115,12 @@ public class ChallengesScreen extends Fragment {
 
             if (spinAngle == 0 && !checkOne) {
                 checkOne = true;
-                onSensorChanged(event);
             }
             if (spinAngle == 1 && !checkTwo) {
                 checkTwo = true;
-                onSensorChanged(event);
             }
             if (spinAngle == -1 && !checkThree) {
                 checkThree = true;
-                onSensorChanged(event);
             }
 
             //see if a full rotation has been performed
@@ -166,16 +143,16 @@ public class ChallengesScreen extends Fragment {
 
             ImageView imageView = (ImageView) getActivity().findViewById(R.id.wheel);
             imageView.setRotation(deg);
-            //TextView textView = (TextView) getActivity().findViewById(R.id.testtext);
-            //textView.setText(Float.toString(deg));
 
 
             //set spin count
             priorSpinCounter = spinAngle;
-            if (spinCounter == 2) {
+            if (spinCounter >= 2) {
                 Random rnum = new Random();
                 i1 = rnum.nextInt(5000 - 500) + 500;
                 spinCounter = 5;
+                mySensorManager.unregisterListener(mySensorEventListener);
+                sersorrunning = false;
                 spinWheel();
 
             }
@@ -186,17 +163,6 @@ public class ChallengesScreen extends Fragment {
             // TODO Auto-generated method stub
         }
     };
-
-
-
-
-
-
-
-
-
-
-
 
 
     public void spinWheel () {
@@ -216,7 +182,9 @@ public class ChallengesScreen extends Fragment {
                 // Selected Challenge dialog Accept your challenge
                 AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
                 alert.setTitle(R.string.acceptChallengeDialogTitle);
-                alert.setCancelable(true);
+                alert.setCancelable(false);
+                // set returned challenge info
+                alert.setMessage("spin " + 5 + " times in " + 10 + " seconds");
                 alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 
                     @Override
@@ -242,10 +210,10 @@ public class ChallengesScreen extends Fragment {
     }
 
     public void FindChallenge() {
-        //lets make this use the backend
+        // TODO: make this use the backend now
 
-        /*
-        challengeSpins = 2;
+
+        challengeSpins = 5;
         challengeTime = 10;
         challengeRpm = 0;
 
@@ -258,12 +226,8 @@ public class ChallengesScreen extends Fragment {
         bundle.putInt("rpm",challengeRpm);
         intent.putExtras(bundle);
         startActivity(intent);
-        */
+
     }
-
-
-
-
 
 
     @Override

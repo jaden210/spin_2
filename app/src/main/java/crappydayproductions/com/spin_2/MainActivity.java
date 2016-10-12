@@ -5,9 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -16,19 +13,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements ChallengesScreen.OnFragmentInteractionListener, HistoryScreen.OnFragmentInteractionListener, StartScreen.OnFragmentInteractionListener {
@@ -79,11 +68,7 @@ public class MainActivity extends AppCompatActivity
             displayAlertDialog();
 
         }
-
-
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -111,9 +96,6 @@ public class MainActivity extends AppCompatActivity
     public void onFragmentInteraction(Uri uri) {
         //Leave blank
     }
-
-
-
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -149,7 +131,7 @@ public class MainActivity extends AppCompatActivity
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "hi";
+                    return "spin";
                 case 1:
                     return "history";
                 case 2:
@@ -158,8 +140,6 @@ public class MainActivity extends AppCompatActivity
             return null;
         }
     }
-
-
 
     //this is the popup that shows after you finish the game
     public void displayAlertDialog() {
@@ -177,21 +157,22 @@ public class MainActivity extends AppCompatActivity
         rpmCount.setText(Long.toString(totalRpm));
 
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        //alert.setTitle("Login");
-        if (challenge == true) {
-            alert.setTitle("You Win");
-        }else if (challenge == false) {
-            alert.setTitle("You Lose...");
-        }else {
-            alert.setTitle("Nice Work!!");
+        if (bundle.getLong("totalSpins") == 0) {
+            alert.setTitle("Nice work");
+        } else {
+            if (challenge == true) {
+                alert.setTitle("You Win");
+            }else if (challenge == false) {
+                alert.setTitle("You Lose...");
+            }
         }
+
         alert.setView(alertLayout);
         alert.setCancelable(false);
-        alert.setNegativeButton("back to the game", new DialogInterface.OnClickListener() {
+        alert.setNegativeButton("back", new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //Toast.makeText(getBaseContext(), "Cancel clicked", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -199,7 +180,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // launch challenges
+                mViewPager.setCurrentItem(0);
             }
         });
         AlertDialog dialog = alert.create();
@@ -213,7 +194,6 @@ public class MainActivity extends AppCompatActivity
     public void onClick(View v) {
         AlertDialog alertBuilder = new AlertDialog.Builder(this)
                 .create();
-        Log.v("hi", "hi");
         alertBuilder.setTitle(R.string.challengeDialogTitle);
         alertBuilder.setMessage(MainActivity.this.getString(R.string.challengeDialogMessage));
         alertBuilder.setButton("OK", new DialogInterface.OnClickListener() {
