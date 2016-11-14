@@ -19,6 +19,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 public class MainActivity extends AppCompatActivity
         implements ChallengesScreen.OnFragmentInteractionListener, HistoryScreen.OnFragmentInteractionListener, StartScreen.OnFragmentInteractionListener {
 
@@ -31,6 +43,13 @@ public class MainActivity extends AppCompatActivity
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
+
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mDatabaseReference;
+    private ChildEventListener mChildEventListener;
+    private FirebaseAnalytics mFirebaseAnalytics;
+    Object currentScores;
+
     private SharedPreferences preferenceSettings;
     private SharedPreferences.Editor prefEditor;
     private static final int PREFERENCE_MODE_PRIVATE = 0;
@@ -55,13 +74,36 @@ public class MainActivity extends AppCompatActivity
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(1);
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mDatabaseReference = mFirebaseDatabase.getReference().child("scores");
+
 
         //detect when the view is changed
+        mChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                currentScores = dataSnapshot.getValue();
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) { }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) { }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) { }
+        };
+        mDatabaseReference.addChildEventListener(mChildEventListener);
 
 
         //for the popup
         Intent intent = getIntent();
-        Bundle bundle =  intent.getExtras();
+        Bundle bundle = intent.getExtras();
 
         if (bundle != null) {
 
@@ -112,9 +154,12 @@ public class MainActivity extends AppCompatActivity
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             switch (position) {
-                case 1: return StartScreen.newInstance(position + 1);
-                case 2: return HistoryScreen.newInstance();
-                case 0: return ChallengesScreen.newInstance();
+                case 1:
+                    return StartScreen.newInstance(position + 1);
+                case 2:
+                    return HistoryScreen.newInstance();
+                case 0:
+                    return ChallengesScreen.newInstance();
             }
             return null;
         }
@@ -124,7 +169,6 @@ public class MainActivity extends AppCompatActivity
             // Show 3 total pages.
             return 3;
         }
-
 
 
         @Override
@@ -149,7 +193,7 @@ public class MainActivity extends AppCompatActivity
         final TextView rpmCount = (TextView) alertLayout.findViewById(R.id.rpmCount);
 
         Intent intent = getIntent();
-        Bundle bundle =  intent.getExtras();
+        Bundle bundle = intent.getExtras();
         Long totalSpins = bundle.getLong("totalSpins");
         Long totalRpm = bundle.getLong("highscoreRpm");
         boolean challenge = bundle.getBoolean("challenge");
@@ -162,7 +206,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             if (challenge == true) {
                 alert.setTitle("You Win");
-            }else if (challenge == false) {
+            } else if (challenge == false) {
                 alert.setTitle("You Lose...");
             }
         }
@@ -207,17 +251,25 @@ public class MainActivity extends AppCompatActivity
 
     public void historyScorer() {
         Intent intent = getIntent();
-        Bundle bundle =  intent.getExtras();
+        Bundle bundle = intent.getExtras();
         Long totalSpins = bundle.getLong("totalSpins");
         Long totalRpm = bundle.getLong("highscoreRpm");
-
-        preferenceSettings = getPreferences(PREFERENCE_MODE_PRIVATE);
+        Map<String, Object> scores = new HashMap<>();
+        preferenceSettings = getSharedPreferences("score",PREFERENCE_MODE_PRIVATE);
         prefEditor = preferenceSettings.edit();
+
 
         if (preferenceSettings.getLong("rpmHistory", 0) == 0) {
             prefEditor.putLong("rpmHistory", totalRpm);
             prefEditor.putLong("spinHistory", totalSpins);
             prefEditor.apply();
+
+            scores.put("totalSpin" , bundle.getLong("totalSpins"));
+            scores.put("maxRpm", bundle.getLong("highscoreRpm"));
+            scores.put("id", new BigDecimal(1).longValue());
+
+            mDatabaseReference.updateChildren(scores);
+
         }else {
             long tempRpm = preferenceSettings.getLong("rpmHistory", 0);
             long tempSpins = preferenceSettings.getLong("spinHistory",0);
@@ -227,9 +279,14 @@ public class MainActivity extends AppCompatActivity
 
             }
             prefEditor.apply();
+            Bundle logBundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "1");
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "maxRpm");
+            mFirebaseAnalytics.logEvent("last added", logBundle);
+
+            }
         }
 
 
-
     }
-}
+

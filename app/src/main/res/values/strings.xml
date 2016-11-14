@@ -13,5 +13,6 @@
     <string name="challengeDialogMessage">Simply set your phone down and give it a spin to select a new challenge.</string>
     <string name="challengeDialogTitle">Welcome to Challenges!</string>
     <string name="acceptChallengeDialogTitle">Incoming Challenge:</string>
+    <string name="play">Play</string>
 
 </resources>

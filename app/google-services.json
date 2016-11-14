@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "616910103594",
+    "firebase_url": "https://api-project-616910103594.firebaseio.com",
+    "project_id": "api-project-616910103594",
+    "storage_bucket": "api-project-616910103594.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:616910103594:android:172beacd956c6dbd",
+        "android_client_info": {
+          "package_name": "crappydayproductions.com.spin_2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "616910103594-72eq7gj3vcrtamppg5ui3tqu46kq02gl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "crappydayproductions.com.spin_2",
+            "certificate_hash": "504EFFE4CFE85FA7549E57E5D2CDB951B8EA42D9"
+          }
+        },
+        {
+          "client_id": "616910103594-ak616g88puukh92dbs8pg853bb0ansp0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbJSkKmHRHH-7Yw2oP2sCDOtFEENdxt4k"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "616910103594-ak616g88puukh92dbs8pg853bb0ansp0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
